@@ -1,9 +1,15 @@
 {
   "version": 2,
   "framework": "nextjs",
-  "installCommand": "yarn install --network-timeout 300000",
+  "installCommand": "yarn install --network-timeout 300000 --ignore-optional --ignore-platform",
   "buildCommand": "yarn build",
   "env": {
     "NODE_ENV": "production"
-  }
+  },
+  "builds": [
+    {
+      "src": "next.config.js",
+      "use": "@vercel/next"
+    }
+  ]
 } 
