@@ -72,9 +72,11 @@
     "seed": "node prisma/seed.js"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=18.0.0",
+    "yarn": ">=1.22.0"
   },
-  "resolutions": {
+  "packageManager": "yarn@1.22.19",
+  "overrides": {
     "inflight": "^1.0.6",
     "npmlog": "^5.0.1",
     "gauge": "^3.0.2",
