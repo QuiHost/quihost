@@ -13,8 +13,7 @@ async function main() {
       surname: 'User',
       password: password,
       userType: 'cleaner',
-      emailVerified: new Date(),
-      verificationToken: '',
+      emailVerified: new Date()
     },
   })
   
