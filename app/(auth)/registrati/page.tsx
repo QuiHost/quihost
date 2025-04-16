@@ -20,7 +20,7 @@ export default function RegisterPage() {
     setShowLoginLink(false)
 
     try {
-      const formData = new FormData(e.currentTarget as HTMLFormElement)
+      const formData = new FormData(e.currentTarget)
       
       // Salva temporaneamente la password per il login automatico dopo la verifica
       const password = formData.get('password')?.toString()
@@ -50,21 +50,23 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-screen">
-      {/* Left section - Form */}
-      <div className="w-full lg:w-1/2 p-6 md:p-12">
-        <div className="max-w-md mx-auto space-y-8">
-          <div className="text-center lg:text-left">
-            <h1 className="text-2xl font-bold text-gray-900">Registrati</h1>
-            <p className="mt-2 text-sm text-gray-600">
-              Hai già un account?{' '}
-              <Link href="/accedi" className="font-medium text-[#00A5A5] hover:text-[#008585]">
-                Accedi
-              </Link>
-            </p>
-          </div>
+    <div className="flex min-h-screen flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <Image
+          className="mx-auto h-12 w-auto"
+          src="/logo.png"
+          alt="QuiHost"
+          width={48}
+          height={48}
+        />
+        <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
+          Crea il tuo account
+        </h2>
+      </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white px-4 py-8 shadow sm:rounded-lg sm:px-10">
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-4">
               <p className="font-medium text-gray-900">Quale opzione ti descrive meglio?</p>
               <div className="space-y-3">
@@ -184,38 +186,18 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#00A5A5] hover:bg-[#008585] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#00A5A5] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex w-full justify-center rounded-md bg-teal-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-teal-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Registrazione in corso...' : 'Registrati'}
             </button>
           </form>
-        </div>
-      </div>
 
-      {/* Right section - Hero */}
-      <div className="hidden lg:block lg:w-1/2 bg-[#00A5A5]">
-        <div className="h-full flex items-center justify-center p-12">
-          <div className="max-w-xl text-center">
-            <div className="bg-white rounded-xl p-8 mb-8 inline-block">
-              <Image
-                src="/logo.svg"
-                alt="Host Hero"
-                width={300}
-                height={80}
-                priority
-                style={{ width: 'auto', height: 'auto' }}
-                className="h-20 w-auto"
-              />
-            </div>
-            <h2 className="text-4xl font-bold text-white mb-6">
-              Gestisci il tuo business con Host Hero
-            </h2>
-            <p className="text-xl text-white opacity-90">
-              La piattaforma all-in-one per host di case vacanza.
-              Automatizza le pulizie, gestisci i pagamenti e migliora
-              l'esperienza dei tuoi ospiti.
-            </p>
-          </div>
+          <p className="mt-6 text-center text-sm text-gray-600">
+            Hai già un account?{' '}
+            <Link href="/accedi" className="text-teal-600 hover:text-teal-500 font-medium">
+              Accedi
+            </Link>
+          </p>
         </div>
       </div>
     </div>

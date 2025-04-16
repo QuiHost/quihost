@@ -15,13 +15,7 @@ export async function PUT(request: Request) {
       where: { email: session.user.email },
       data: {
         name: data.name,
-        phone: data.phone,
-        address: data.address,
-        city: data.city,
-        state: data.state,
-        zipCode: data.zipCode,
-        businessName: data.businessName,
-        vatNumber: data.vatNumber
+        phone: data.phone
       },
       select: {
         id: true,
