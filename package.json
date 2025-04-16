@@ -73,22 +73,13 @@
     "seed": "node prisma/seed.js"
   },
   "engines": {
-    "node": "18.x",
-    "yarn": ">=1.22.0"
+    "node": "18.x"
   },
-  "packageManager": "yarn@1.22.19",
-  "overrides": {
-    "inflight": "^1.0.6",
-    "npmlog": "^5.0.1",
-    "gauge": "^3.0.2",
-    "are-we-there-yet": "^2.0.0",
-    "@humanwhocodes/config-array": "^0.13.0",
-    "@humanwhocodes/object-schema": "^2.0.3",
+  "resolutions": {
+    "sharp": "^0.34.1",
+    "bcrypt": "^5.1.1",
     "glob": "^10.3.10",
     "rimraf": "^5.0.5",
     "eslint": "^8.56.0"
-  },
-  "resolutions": {
-    "sharp": "^0.34.1"
   }
 }

@@ -1,8 +1,8 @@
 {
   "version": 2,
   "framework": "nextjs",
-  "installCommand": "yarn install --network-timeout 300000 --ignore-optional --ignore-platform",
-  "buildCommand": "yarn build",
+  "installCommand": "npm install --legacy-peer-deps --network-timeout 300000",
+  "buildCommand": "npm run build",
   "env": {
     "NODE_ENV": "production"
   },
