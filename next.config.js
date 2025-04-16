@@ -5,7 +5,18 @@ const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
   webpack: (config) => {
-    config.resolve.alias['@'] = path.join(__dirname, './')
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@': path.resolve(__dirname),
+      '@components': path.resolve(__dirname, 'components'),
+      '@app': path.resolve(__dirname, 'app'),
+      '@lib': path.resolve(__dirname, 'lib'),
+      '@types': path.resolve(__dirname, 'types'),
+      '@public': path.resolve(__dirname, 'public'),
+      '@hooks': path.resolve(__dirname, 'hooks'),
+      '@server': path.resolve(__dirname, 'server'),
+      '@prisma': path.resolve(__dirname, 'prisma')
+    }
     return config
   },
   // Configurazioni per ottimizzare il deploy su Vercel

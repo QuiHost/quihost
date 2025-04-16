@@ -23,7 +23,15 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@components/*": ["./components/*"],
+      "@app/*": ["./app/*"],
+      "@lib/*": ["./lib/*"],
+      "@types/*": ["./types/*"],
+      "@public/*": ["./public/*"],
+      "@hooks/*": ["./hooks/*"],
+      "@server/*": ["./server/*"],
+      "@prisma/*": ["./prisma/*"]
     }
   },
   "include": [
