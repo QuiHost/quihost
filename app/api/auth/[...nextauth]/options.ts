@@ -1,7 +1,21 @@
 import type { NextAuthOptions } from 'next-auth'
+import type { User } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { prisma } from '@/lib/prisma'
 import { compare } from 'bcryptjs'
+
+// Extend the built-in User type
+declare module 'next-auth' {
+  interface User {
+    id: string
+    email: string
+    name: string | null
+    role: string
+    userType: string
+    image: string | null
+    emailVerified: Date | null
+  }
+}
 
 export const options: NextAuthOptions = {
   session: {
