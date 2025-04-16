@@ -65,7 +65,7 @@ export async function POST(req: Request) {
     const hashedPassword = await bcrypt.hash(password, 10)
 
     try {
-      // Create user with verification token
+      // Create user
       const user = await prisma.user.create({
         data: {
           name: firstName,
@@ -73,14 +73,23 @@ export async function POST(req: Request) {
           email,
           password: hashedPassword,
           userType,
-          verificationToken: crypto.randomUUID()
         }
       })
 
+      // Create verification token
+      const verificationToken = crypto.randomUUID();
+      const expiryDate = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours from now
+
+      await prisma.verificationToken.create({
+        data: {
+          identifier: email,
+          token: verificationToken,
+          expires: expiryDate
+        }
+      });
+
       // Send verification email
-      if (user.verificationToken) {
-        await sendVerificationEmail(email, user.verificationToken, `${firstName} ${surname}`)
-      }
+      await sendVerificationEmail(email, verificationToken);
 
       return NextResponse.json(
         { message: 'Utente registrato con successo. Controlla la tua email per verificare l\'account.' },
