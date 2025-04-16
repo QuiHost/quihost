@@ -66,7 +66,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.userType = user.userType
         token.id = user.id
-        token.role = user.role
+        token.role = user.userType
       }
       return token
     },

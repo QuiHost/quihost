@@ -23,7 +23,6 @@ export async function PUT(request: Request) {
         name: true,
         email: true,
         phone: true,
-        role: true,
         userType: true
       }
     })
@@ -52,7 +51,6 @@ export async function GET() {
         name: true,
         email: true,
         phone: true,
-        role: true,
         userType: true
       }
     })
