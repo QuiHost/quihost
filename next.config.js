@@ -16,8 +16,18 @@ const nextConfig = {
     // Migliora la velocità di build
     turbotrace: {
       logLevel: 'error'
+    },
+    serverComponentsExternalPackages: ['sharp'],
+  },
+  images: {
+    domains: ['localhost'],
+  },
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.externals.push('sharp');
     }
-  }
+    return config;
+  },
 }
 
 module.exports = nextConfig 
