@@ -1,3 +1,4 @@
+// Versione corretta del route API per il profilo utente
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { options } from '@/app/api/auth/[...nextauth]/options'

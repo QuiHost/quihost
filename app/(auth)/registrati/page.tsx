@@ -35,14 +35,16 @@ export default function RegisterPage() {
         window.location.href = `/verifica-email?email=${encodeURIComponent(result.email)}`
       }
     } catch (err: any) {
+      // Usa solo stringhe per setError, mai JSX
       const errorMessage = err.message || 'Si è verificato un errore durante la registrazione'
       setError(errorMessage)
+      
+      // Controlla se l'errore indica un'email già registrata
       if (errorMessage.includes('già registrata')) {
         setShowLoginLink(true)
       }
-      toast.error(errorMessage)
       
-      // Se c'è un errore, rimuovi la password temporanea
+      toast.error(errorMessage)
       sessionStorage.removeItem('tempPassword')
     } finally {
       setLoading(false)
@@ -170,9 +172,12 @@ export default function RegisterPage() {
                     <div className="text-sm text-red-800">
                       {error}
                       {showLoginLink && (
-                        <Link href="/accedi" className="ml-1 text-teal-600 hover:text-teal-500 font-medium">
-                          Vai alla pagina di accesso
-                        </Link>
+                        <span>
+                          {' '}
+                          <Link href="/accedi" className="ml-1 text-teal-600 hover:text-teal-500 font-medium">
+                            Vai alla pagina di accesso
+                          </Link>
+                        </span>
                       )}
                     </div>
                   </div>
