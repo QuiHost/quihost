@@ -15,7 +15,7 @@ async function main() {
       surname: 'User',
       password: password,
       userType: 'cleaner',
-      emailVerified: true,
+      emailVerified: new Date(),
       verificationToken: '',
     },
   })
