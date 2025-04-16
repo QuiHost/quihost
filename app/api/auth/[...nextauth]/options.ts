@@ -40,7 +40,9 @@ export const options: NextAuthOptions = {
           email: user.email,
           name: user.name,
           role: user.userType,
-          userType: user.userType
+          userType: user.userType,
+          image: null,
+          emailVerified: user.emailVerified
         }
       }
     })
