@@ -73,7 +73,7 @@
     "seed": "node prisma/seed.js"
   },
   "engines": {
-    "node": ">=18.0.0",
+    "node": "18.x",
     "yarn": ">=1.22.0"
   },
   "packageManager": "yarn@1.22.19",
@@ -85,6 +85,7 @@
     "@humanwhocodes/config-array": "^0.13.0",
     "@humanwhocodes/object-schema": "^2.0.3",
     "glob": "^10.3.10",
-    "rimraf": "^5.0.5"
+    "rimraf": "^5.0.5",
+    "eslint": "^8.56.0"
   }
 }

@@ -5,11 +5,5 @@
   "buildCommand": "yarn build",
   "env": {
     "NODE_ENV": "production"
-  },
-  "builds": [
-    {
-      "src": "next.config.js",
-      "use": "@vercel/next"
-    }
-  ]
+  }
 } 
