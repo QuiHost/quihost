@@ -73,5 +73,15 @@
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "resolutions": {
+    "inflight": "^1.0.6",
+    "npmlog": "^5.0.1",
+    "gauge": "^3.0.2",
+    "are-we-there-yet": "^2.0.0",
+    "@humanwhocodes/config-array": "^0.13.0",
+    "@humanwhocodes/object-schema": "^2.0.3",
+    "glob": "^10.3.10",
+    "rimraf": "^5.0.5"
   }
 }
