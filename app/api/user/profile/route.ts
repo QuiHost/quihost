@@ -1,12 +1,12 @@
 // Versione corretta del route API per il profilo utente
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { options } from '@/app/api/auth/[...nextauth]/options'
+import { authOptions } from '@/app/api/auth/[...nextauth]/options'
 import { prisma } from '@/lib/prisma'
 
 export async function PUT(request: Request) {
   try {
-    const session = await getServerSession(options)
+    const session = await getServerSession(authOptions)
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Non autorizzato' }, { status: 401 })
     }
@@ -40,7 +40,7 @@ export async function PUT(request: Request) {
 
 export async function GET() {
   try {
-    const session = await getServerSession(options)
+    const session = await getServerSession(authOptions)
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Non autorizzato' }, { status: 401 })
     }
