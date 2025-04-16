@@ -7,6 +7,16 @@ const nextConfig = {
   webpack: (config) => {
     config.resolve.alias['@'] = path.join(__dirname, './')
     return config
+  },
+  // Configurazioni per ottimizzare il deploy su Vercel
+  swcMinify: true,
+  experimental: {
+    // Abilita ottimizzazioni sperimentali
+    optimizeCss: true,
+    // Migliora la velocità di build
+    turbotrace: {
+      logLevel: 'error'
+    }
   }
 }
 
