@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { toast } from 'react-hot-toast'
 
-export default function VerifyEmailPage() {
+// Componente che usa useSearchParams
+function VerifyEmailContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [isVerifying, setIsVerifying] = useState(true)
@@ -64,4 +65,34 @@ export default function VerifyEmailPage() {
       </div>
     </div>
   )
-} 
+}
+
+// Loading fallback
+function LoadingVerifyEmail() {
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow">
+        <div className="text-center">
+          <h2 className="text-3xl font-extrabold text-gray-900">
+            Caricamento...
+          </h2>
+          <p className="mt-2 text-sm text-gray-600">
+            Stiamo caricando la pagina di verifica...
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Pagina principale avvolta in Suspense
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={<LoadingVerifyEmail />}>
+      <VerifyEmailContent />
+    </Suspense>
+  )
+}
+
+// Configurazione per il pre-rendering
+export const dynamic = 'force-dynamic' 
