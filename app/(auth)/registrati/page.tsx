@@ -37,15 +37,13 @@ export default function RegisterPage() {
     } catch (err: any) {
       const errorMessage = err.message || 'Si è verificato un errore durante la registrazione'
       setError(errorMessage)
+      if (errorMessage.includes('già registrata')) {
+        setShowLoginLink(true)
+      }
       toast.error(errorMessage)
       
       // Se c'è un errore, rimuovi la password temporanea
       sessionStorage.removeItem('tempPassword')
-      
-      // Se l'errore indica che l'email è già registrata, mostriamo il link per l'accesso
-      if (errorMessage.includes('già registrata')) {
-        setShowLoginLink(true)
-      }
     } finally {
       setLoading(false)
     }

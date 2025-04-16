@@ -7,7 +7,7 @@ export async function PUT(request: Request) {
   try {
     const session = await getServerSession(authOptions)
     if (!session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'Non autorizzato' }, { status: 401 })
     }
 
     const data = await request.json()
@@ -22,14 +22,22 @@ export async function PUT(request: Request) {
         zipCode: data.zipCode,
         businessName: data.businessName,
         vatNumber: data.vatNumber
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        role: true,
+        userType: true
       }
     })
 
-    return NextResponse.json({ user })
+    return NextResponse.json(user)
   } catch (error) {
     console.error('Profile update error:', error)
     return NextResponse.json(
-      { error: 'Failed to update profile' },
+      { error: 'Errore durante l\'aggiornamento del profilo' },
       { status: 500 }
     )
   }
@@ -39,7 +47,7 @@ export async function GET() {
   try {
     const session = await getServerSession(authOptions)
     if (!session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'Non autorizzato' }, { status: 401 })
     }
 
     const user = await prisma.user.findUnique({
@@ -49,30 +57,20 @@ export async function GET() {
         name: true,
         email: true,
         phone: true,
-        address: true,
-        city: true,
-        state: true,
-        zipCode: true,
-        businessName: true,
-        vatNumber: true,
-        emailVerified: true,
-        phoneVerified: true,
-        hasCompletedOnboarding: true,
-        mainGoal: true,
-        businessType: true,
-        referralSource: true
+        role: true,
+        userType: true
       }
     })
 
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+      return NextResponse.json({ error: 'Utente non trovato' }, { status: 404 })
     }
 
-    return NextResponse.json({ user })
+    return NextResponse.json(user)
   } catch (error) {
     console.error('Profile fetch error:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch profile' },
+      { error: 'Errore durante il recupero del profilo' },
       { status: 500 }
     )
   }
