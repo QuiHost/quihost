@@ -11,11 +11,13 @@ export default function RegisterPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [showLoginLink, setShowLoginLink] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
     setError('')
+    setShowLoginLink(false)
 
     try {
       const formData = new FormData(e.currentTarget as HTMLFormElement)
@@ -42,14 +44,7 @@ export default function RegisterPage() {
       
       // Se l'errore indica che l'email è già registrata, mostriamo il link per l'accesso
       if (errorMessage.includes('già registrata')) {
-        setError(
-          <div className="text-sm text-red-600">
-            {errorMessage}{' '}
-            <Link href="/accedi" className="text-teal-600 hover:text-teal-500 font-medium">
-              Vai alla pagina di accesso
-            </Link>
-          </div>
-        )
+        setShowLoginLink(true)
       }
     } finally {
       setLoading(false)
@@ -172,7 +167,17 @@ export default function RegisterPage() {
               <div className="rounded-md bg-red-50 p-4">
                 <div className="flex">
                   <div className="ml-3">
-                    <h3 className="text-sm font-medium text-red-800">{error}</h3>
+                    <div className="text-sm text-red-800">
+                      {error}
+                      {showLoginLink && (
+                        <>
+                          {' '}
+                          <Link href="/accedi" className="text-teal-600 hover:text-teal-500 font-medium">
+                            Vai alla pagina di accesso
+                          </Link>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
