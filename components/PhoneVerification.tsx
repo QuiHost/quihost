@@ -2,17 +2,19 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { toast } from 'sonner'
+import { Phone } from 'lucide-react'
 
 export function PhoneVerification() {
   const [phone, setPhone] = useState('')
   const [code, setCode] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [showCodeInput, setShowCodeInput] = useState(false)
+  const [isVerified, setIsVerified] = useState(false)
 
   const handleSendCode = async () => {
     try {
       setIsLoading(true)
-      const response = await fetch('/api/auth/send-phone-verification', {
+      const response = await fetch('/api/auth/send-verification', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone })
@@ -24,7 +26,7 @@ export function PhoneVerification() {
         throw new Error(data.error || 'Errore durante l\'invio del codice')
       }
 
-      toast.success('Codice di verifica inviato')
+      toast.success('Codice di verifica inviato alla tua email')
       setShowCodeInput(true)
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Errore durante l\'invio del codice')
@@ -36,7 +38,7 @@ export function PhoneVerification() {
   const handleVerifyCode = async () => {
     try {
       setIsLoading(true)
-      const response = await fetch('/api/auth/verify-phone', {
+      const response = await fetch('/api/auth/verify-code', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone, code })
@@ -49,6 +51,19 @@ export function PhoneVerification() {
       }
 
       toast.success('Numero di telefono verificato con successo')
+      setIsVerified(true)
+      
+      // Aggiorna il numero di telefono dell'utente
+      const updateResponse = await fetch('/api/auth/update-phone', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, verified: true })
+      })
+
+      if (!updateResponse.ok) {
+        throw new Error('Errore durante il salvataggio del numero verificato')
+      }
+
       // Ricarica la pagina per aggiornare lo stato dell'utente
       window.location.reload()
     } catch (error) {
@@ -58,16 +73,29 @@ export function PhoneVerification() {
     }
   }
 
+  if (isVerified) {
+    return (
+      <div className="flex items-center gap-2 text-green-600">
+        <Phone className="h-4 w-4" />
+        <span>Numero di telefono verificato con successo</span>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <Input
-          type="tel"
-          placeholder="Inserisci il tuo numero di telefono"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          disabled={isLoading || showCodeInput}
-        />
+        <div className="relative">
+          <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="tel"
+            placeholder="+39 123 456 7890"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            disabled={isLoading || showCodeInput}
+            className="pl-10"
+          />
+        </div>
         {!showCodeInput && (
           <Button
             onClick={handleSendCode}

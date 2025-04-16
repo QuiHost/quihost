@@ -48,7 +48,7 @@ function VerifyEmailContent() {
         email: email,
         password: sessionStorage.getItem('tempPassword'),
         redirect: false,
-        callbackUrl: data.userType === 'cleaner' ? '/dashboard-cleaner' : '/dashboard-host'
+        callbackUrl: data.userType === 'cleaner' ? '/dashboard/cleaner' : '/dashboard/host'
       })
 
       if (result?.error) {
@@ -62,9 +62,9 @@ function VerifyEmailContent() {
 
       if (data.userType === 'cleaner') {
         console.log('Redirecting to cleaner dashboard...')
-        window.location.href = '/dashboard-cleaner'
+        router.push('/dashboard/cleaner')
       } else if (data.userType === 'host') {
-        window.location.href = '/dashboard-host'
+        router.push('/dashboard/host')
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Errore durante la verifica'

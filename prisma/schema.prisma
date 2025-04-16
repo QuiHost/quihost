@@ -1,6 +1,8 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
-  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -21,9 +23,11 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
@@ -32,33 +36,26 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model User {
-  id                     String    @id @default(cuid())
-  name                   String?
-  surname                String?
-  email                  String    @unique
-  emailVerified          DateTime?
-  password               String?
-  image                  String?
-  userType               String    @default("cleaner")
-  phoneVerified          Boolean   @default(false)
-  phone                  String?   @unique
-  hasCompletedOnboarding Boolean   @default(false)
-  mainGoal               String?
-  businessType           String?
-  referralSource         String?
-  onboardingTimestamp    DateTime?
-  address                String?
-  profileImage           String?
-  createdAt              DateTime  @default(now())
-  updatedAt              DateTime  @updatedAt
-  accounts               Account[]
-  sessions               Session[]
-  phoneVerifications     PhoneVerification[]
-  telegramUsername       String?   @unique
-  telegramChatId         String?
+  id                   String    @id @default(cuid())
+  name                 String?
+  surname             String?
+  email               String    @unique
+  emailVerified       DateTime?
+  image               String?
+  userType            String    // "cleaner" o "host"
+  phone               String?   @unique
+  phoneVerified       Boolean   @default(false)
+  hasCompletedOnboarding Boolean @default(false)
+  accounts            Account[]
+  sessions            Session[]
+  verificationCodes   VerificationCode[]
+
+  @@index([email])
 }
 
 model VerificationToken {
@@ -69,15 +66,17 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-model PhoneVerification {
-  id        String   @id @default(cuid())
-  userId    String
-  code      String
-  phone     String
-  verified  Boolean  @default(false)
-  createdAt DateTime @default(now())
-  expiresAt DateTime
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+model VerificationCode {
+  id         String   @id @default(cuid())
+  code       String
+  phoneNumber String
+  userId     String
+  type       String   // "EMAIL" o "PHONE"
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  verified   Boolean  @default(false)
+  user       User     @relation(fields: [userId], references: [id])
 
   @@index([userId])
+  @@index([phoneNumber])
 }

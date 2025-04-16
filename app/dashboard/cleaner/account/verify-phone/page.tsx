@@ -1,50 +1,58 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Phone } from "lucide-react"
+
+interface UserData {
+  id: string
+  name: string | null
+  email: string | null
+  phoneNumber: string | null
+  phoneVerified: boolean
+}
 
 export default function VerifyPhonePage() {
   const router = useRouter()
-  const [phone, setPhone] = useState('')
-  const [telegramUsername, setTelegramUsername] = useState('')
-  const [verificationCode, setVerificationCode] = useState('')
-  const [step, setStep] = useState<'telegram' | 'phone' | 'code'>('telegram')
-  const [error, setError] = useState<string | null>(null)
+  const [userData, setUserData] = useState<UserData | null>(null)
+  const [verificationCode, setVerificationCode] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
 
-  const handleSaveTelegram = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
-    setIsLoading(true)
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch('/api/auth/user')
+        if (!response.ok) {
+          throw new Error('Errore nel caricamento dei dati')
+        }
+        const data = await response.json()
+        setUserData(data)
 
-    try {
-      const response = await fetch('/api/auth/save-telegram', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username: telegramUsername }),
-      })
+        // Se l'utente non ha un numero di telefono salvato, reindirizza alla pagina del profilo
+        if (!data.phoneNumber) {
+          router.push('/dashboard/cleaner/account')
+          return
+        }
 
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Errore nel salvataggio dell\'username Telegram')
+        // Invia automaticamente il codice di verifica quando si carica la pagina
+        handleSendCode(data.phoneNumber)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Errore nel caricamento dei dati')
       }
-
-      setStep('phone')
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Errore nel salvataggio dell\'username Telegram')
-    } finally {
-      setIsLoading(false)
     }
-  }
 
-  const handleSendCode = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
+    fetchUserData()
+  }, [router])
+
+  const handleSendCode = async (phoneNumber: string) => {
     setIsLoading(true)
+    setError(null)
+    setSuccess(null)
 
     try {
       const response = await fetch('/api/auth/send-verification', {
@@ -52,16 +60,18 @@ export default function VerifyPhonePage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ phone }),
+        body: JSON.stringify({ 
+          phone: phoneNumber,
+          type: 'PHONE'
+        }),
       })
 
-      const data = await response.json()
-
       if (!response.ok) {
+        const data = await response.json()
         throw new Error(data.error || 'Errore nell\'invio del codice')
       }
 
-      setStep('code')
+      setSuccess('Codice di verifica inviato alla tua email')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Errore nell\'invio del codice')
     } finally {
@@ -71,25 +81,37 @@ export default function VerifyPhonePage() {
 
   const handleVerifyCode = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError(null)
+    if (!userData?.phoneNumber) {
+      setError('Numero di telefono non trovato')
+      return
+    }
+
     setIsLoading(true)
+    setError(null)
+    setSuccess(null)
 
     try {
-      const response = await fetch('/api/auth/verify-phone', {
+      const response = await fetch('/api/auth/verify-code', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ phone, code: verificationCode }),
+        body: JSON.stringify({
+          code: verificationCode,
+          phone: userData.phoneNumber,
+          type: 'PHONE'
+        }),
       })
 
-      const data = await response.json()
-
       if (!response.ok) {
-        throw new Error(data.error || 'Errore nella verifica del codice')
+        const data = await response.json()
+        throw new Error(data.error || 'Codice di verifica non valido')
       }
 
-      router.push('/dashboard/cleaner/account')
+      setSuccess('Numero di telefono verificato con successo')
+      setTimeout(() => {
+        router.push('/dashboard/cleaner/account')
+      }, 2000)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Errore nella verifica del codice')
     } finally {
@@ -97,156 +119,63 @@ export default function VerifyPhonePage() {
     }
   }
 
+  if (!userData?.phoneNumber) {
+    return (
+      <div className="flex items-center justify-center h-48">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-teal-500"></div>
+      </div>
+    )
+  }
+
   return (
-    <div className="space-y-6 max-w-md mx-auto">
-      <div>
-        <h3 className="text-lg font-medium">Verifica Numero di Telefono</h3>
-        <p className="text-sm text-muted-foreground">
-          Verifica il tuo numero di telefono per iniziare a ricevere prenotazioni
+    <div className="container max-w-2xl py-8">
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold mb-2">Verifica numero di telefono</h1>
+        <p className="text-muted-foreground">
+          Ti abbiamo inviato un codice di verifica via email per confermare il numero {userData.phoneNumber}
         </p>
       </div>
 
       {error && (
-        <div className="p-4 border border-red-200 bg-red-50 rounded-md">
-          <p className="text-sm text-red-600">{error}</p>
+        <Alert variant="destructive" className="mb-4">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
+      {success && (
+        <Alert className="mb-4 bg-green-50 border-green-200">
+          <AlertDescription className="text-green-600">{success}</AlertDescription>
+        </Alert>
+      )}
+
+      <form onSubmit={handleVerifyCode} className="space-y-6">
+        <div className="space-y-2">
+          <label htmlFor="code" className="text-sm font-medium">
+            Codice di verifica
+          </label>
+          <Input
+            id="code"
+            type="text"
+            placeholder="Inserisci il codice ricevuto via email"
+            value={verificationCode}
+            onChange={(e) => setVerificationCode(e.target.value)}
+            required
+          />
         </div>
-      )}
-
-      {step === 'telegram' && (
-        <div className="space-y-4">
-          <div className="p-4 border border-blue-200 bg-blue-50 rounded-md">
-            <h4 className="font-medium text-blue-800 mb-2">Verifica tramite Telegram</h4>
-            <p className="text-sm text-blue-600 mb-4">
-              Per ricevere il codice di verifica su Telegram, segui questi passaggi:
-            </p>
-            <ol className="list-decimal list-inside text-sm text-blue-600 space-y-2">
-              <li>Apri Telegram e cerca il bot <code className="bg-blue-100 px-1">@TurnoVerifyBot</code></li>
-              <li>Avvia il bot cliccando su Start</li>
-              <li>Inserisci il tuo username Telegram qui sotto</li>
-            </ol>
-          </div>
-
-          <form onSubmit={handleSaveTelegram} className="space-y-4">
-            <div>
-              <label htmlFor="telegram" className="block text-sm font-medium text-gray-700">
-                Username Telegram
-              </label>
-              <div className="mt-1 relative">
-                <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">@</span>
-                <input
-                  type="text"
-                  id="telegram"
-                  name="telegram"
-                  value={telegramUsername}
-                  onChange={(e) => setTelegramUsername(e.target.value)}
-                  placeholder="il_tuo_username"
-                  className="block w-full pl-8 rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-                  required
-                />
-              </div>
-              <p className="mt-1 text-sm text-gray-500">
-                Inserisci il tuo username Telegram senza il simbolo @
-              </p>
-            </div>
-            <div className="flex justify-between items-center">
-              <button
-                type="button"
-                onClick={() => setStep('phone')}
-                className="text-sm text-gray-600 hover:text-gray-900"
-              >
-                Usa SMS invece
-              </button>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="inline-flex justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50"
-              >
-                {isLoading ? 'Salvataggio...' : 'Continua'}
-              </button>
-            </div>
-          </form>
+        <div className="flex gap-4">
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? "Verifica in corso..." : "Verifica"}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => handleSendCode(userData.phoneNumber!)}
+            disabled={isLoading}
+          >
+            Invia nuovo codice
+          </Button>
         </div>
-      )}
-
-      {step === 'phone' && (
-        <form onSubmit={handleSendCode} className="space-y-4">
-          <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-              Numero di telefono
-            </label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="+39 123 456 7890"
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-              required
-            />
-            <p className="mt-1 text-sm text-gray-500">
-              Inserisci il tuo numero di telefono completo di prefisso internazionale
-            </p>
-          </div>
-          <div className="flex justify-between items-center">
-            <button
-              type="button"
-              onClick={() => setStep('telegram')}
-              className="text-sm text-gray-600 hover:text-gray-900"
-            >
-              Usa Telegram invece
-            </button>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="inline-flex justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50"
-            >
-              {isLoading ? 'Invio in corso...' : 'Invia codice di verifica'}
-            </button>
-          </div>
-        </form>
-      )}
-
-      {step === 'code' && (
-        <form onSubmit={handleVerifyCode} className="space-y-4">
-          <div>
-            <label htmlFor="code" className="block text-sm font-medium text-gray-700">
-              Codice di verifica
-            </label>
-            <input
-              type="text"
-              id="code"
-              name="code"
-              value={verificationCode}
-              onChange={(e) => setVerificationCode(e.target.value)}
-              placeholder="123456"
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-              required
-              maxLength={6}
-              pattern="\d{6}"
-            />
-            <p className="mt-1 text-sm text-gray-500">
-              Inserisci il codice di verifica a 6 cifre ricevuto
-            </p>
-          </div>
-          <div className="flex items-center justify-between">
-            <button
-              type="button"
-              onClick={() => setStep('phone')}
-              className="text-sm text-gray-600 hover:text-gray-900"
-            >
-              Modifica numero
-            </button>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="inline-flex justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50"
-            >
-              {isLoading ? 'Verifica in corso...' : 'Verifica codice'}
-            </button>
-          </div>
-        </form>
-      )}
+      </form>
     </div>
   )
 } 

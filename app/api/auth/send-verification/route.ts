@@ -3,6 +3,8 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
+import { generateVerificationCode } from '@/lib/utils'
+import { sendEmail } from '@/lib/email'
 
 // Schema di validazione per il numero di telefono
 const phoneSchema = z.object({
@@ -58,52 +60,65 @@ export async function POST(req: Request) {
     const body = await req.json()
     const { phone } = phoneSchema.parse(body)
 
-    // Genera un codice casuale a 6 cifre
-    const code = Math.floor(100000 + Math.random() * 900000).toString()
+    // Genera un codice di 6 cifre
+    const code = generateVerificationCode()
     
-    // Imposta la scadenza a 10 minuti da ora
+    // Imposta la scadenza a 10 minuti
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000)
 
     // Crea una nuova verifica nel database
-    await prisma.phoneVerification.create({
+    await prisma.verificationToken.create({
       data: {
-        userId: session.user.id,
-        phone,
-        code,
-        expiresAt,
+        identifier: `${session.user.id}:${phone}`,
+        token: code,
+        expires: expiresAt,
       },
     })
 
-    // Recupera l'username Telegram dell'utente
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { telegramUsername: true },
-    })
+    // Invia il codice via email
+    if (session.user.email) {
+      await sendEmail({
+        to: session.user.email,
+        subject: 'Codice di verifica Turno',
+        text: `Il tuo codice di verifica per il numero ${phone} è: ${code}. Questo codice scadrà tra 10 minuti.`,
+        html: `
+          <h2>Codice di verifica Turno</h2>
+          <p>Il tuo codice di verifica per il numero ${phone} è:</p>
+          <h1 style="font-size: 32px; letter-spacing: 5px; background: #f5f5f5; padding: 20px; text-align: center; font-family: monospace;">${code}</h1>
+          <p>Questo codice scadrà tra 10 minuti.</p>
+        `
+      })
+    }
 
-    if (user?.telegramUsername) {
-      // Se l'utente ha un username Telegram, invia il codice tramite Telegram
-      try {
-        await sendTelegramMessage(
-          user.telegramUsername,
-          `<b>Codice di verifica Turno</b>\n\nEcco il tuo codice di verifica: <code>${code}</code>\n\nQuesto codice scadrà tra 10 minuti.`
-        )
-      } catch (error) {
-        console.error('Errore nell\'invio del messaggio Telegram:', error)
-        // Se c'è un errore con Telegram, logghiamo il codice per il testing
-        if (process.env.NODE_ENV === 'development') {
-          console.log('Codice di verifica:', code)
-        }
-      }
+    if (process.env.NODE_ENV === 'development') {
+      // In development, usa il mock service
+      mockVerificationService.sendVerificationCode(phone, code)
     } else {
-      // Se l'utente non ha un username Telegram, logghiamo il codice per il testing
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Codice di verifica:', code)
+      // In production, usa Telegram o SMS
+      const user = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { telegramUsername: true },
+      })
+
+      if (user?.telegramUsername) {
+        try {
+          await sendTelegramMessage(
+            user.telegramUsername,
+            `<b>Codice di verifica Turno</b>\n\nEcco il tuo codice di verifica: <code>${code}</code>\n\nQuesto codice scadrà tra 10 minuti.`
+          )
+        } catch (error) {
+          console.error('Errore nell\'invio del messaggio Telegram:', error)
+          throw new Error('Errore nell\'invio del codice di verifica')
+        }
+      } else {
+        // TODO: Implementare l'invio via SMS
+        throw new Error('Invio SMS non ancora implementato')
       }
     }
 
     return NextResponse.json({ 
       message: 'Codice di verifica inviato con successo',
-      // In produzione, non inviare mai il codice nella risposta
+      // In development, includi il codice nella risposta
       code: process.env.NODE_ENV === 'development' ? code : undefined
     })
   } catch (error) {

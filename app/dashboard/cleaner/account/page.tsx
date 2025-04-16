@@ -2,13 +2,18 @@
 
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { useEffect, useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Phone } from "lucide-react"
 
 interface UserData {
   id: string
   name: string | null
   email: string | null
-  phone: string | null
+  phoneNumber: string | null
   phoneVerified: boolean
   surname: string | null
   hasCompletedOnboarding: boolean
@@ -21,6 +26,9 @@ export default function AccountPage() {
   const [userData, setUserData] = useState<UserData | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [phone, setPhone] = useState("")
+  const [isSaving, setIsSaving] = useState(false)
+  const [success, setSuccess] = useState<string | null>(null)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -43,6 +51,9 @@ export default function AccountPage() {
         const data = await response.json()
         console.log('User data received:', data)
         setUserData(data)
+        if (data.phoneNumber) {
+          setPhone(data.phoneNumber)
+        }
       } catch (err) {
         console.error('Error fetching user data:', err)
         setError(err instanceof Error ? err.message : 'Errore nel caricamento dei dati')
@@ -55,6 +66,36 @@ export default function AccountPage() {
       fetchUserData()
     }
   }, [session?.user, status, router])
+
+  const handleSavePhone = async () => {
+    setIsSaving(true)
+    setError(null)
+    setSuccess(null)
+
+    try {
+      const response = await fetch('/api/auth/update-phone', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ phone }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Errore nel salvataggio del numero')
+      }
+
+      setSuccess('Numero di telefono salvato con successo')
+      // Aggiorna i dati utente locali
+      setUserData(prev => prev ? { ...prev, phoneNumber: phone } : null)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Errore nel salvataggio del numero')
+    } finally {
+      setIsSaving(false)
+    }
+  }
 
   if (status === 'loading' || isLoading) {
     return (
@@ -83,10 +124,6 @@ export default function AccountPage() {
     )
   }
 
-  const handleVerifyPhone = () => {
-    router.push('/dashboard/cleaner/account/verify-phone')
-  }
-
   return (
     <div className="space-y-6">
       <div>
@@ -95,51 +132,65 @@ export default function AccountPage() {
           Gestisci le impostazioni del tuo account
         </p>
       </div>
+
+      {success && (
+        <Alert className="bg-green-50 border-green-200">
+          <AlertDescription className="text-green-600">{success}</AlertDescription>
+        </Alert>
+      )}
+
       <div className="grid gap-6">
         <div className="rounded-lg border p-4">
           <h4 className="mb-4 font-medium">Informazioni Personali</h4>
-          <div className="space-y-2">
-            <p className="text-sm">
-              <span className="font-medium">Nome:</span> {userData.name} {userData.surname}
-            </p>
-            <p className="text-sm">
-              <span className="font-medium">Email:</span> {userData.email}
-            </p>
-          </div>
-        </div>
-
-        <div className="rounded-lg border p-4">
-          <h4 className="mb-4 font-medium">Verifica Telefono</h4>
-          {userData.phoneVerified ? (
-            <div className="flex items-center gap-2 text-sm text-green-600">
-              <svg
-                className="h-4 w-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
-              Numero di telefono verificato: {userData.phone}
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">
-                Verifica il tuo numero di telefono per iniziare a ricevere prenotazioni
+          <div className="space-y-4">
+            <div>
+              <p className="text-sm">
+                <span className="font-medium">Nome:</span> {userData.name} {userData.surname}
               </p>
-              <button 
-                onClick={handleVerifyPhone}
-                className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-              >
-                Verifica Numero
-              </button>
+              <p className="text-sm">
+                <span className="font-medium">Email:</span> {userData.email}
+              </p>
             </div>
-          )}
+            <div className="space-y-2">
+              <label htmlFor="phone" className="text-sm font-medium">
+                Numero di telefono
+              </label>
+              <div className="flex gap-4">
+                <div className="relative flex-1">
+                  <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="+39 123 456 7890"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+                <Button 
+                  onClick={handleSavePhone} 
+                  disabled={isSaving}
+                >
+                  {isSaving ? "Salvataggio..." : "Salva"}
+                </Button>
+                {!userData.phoneVerified && (
+                  <Link href="/dashboard/cleaner/account/verify-phone">
+                    <Button 
+                      variant="outline"
+                      type="button"
+                    >
+                      Verifica
+                    </Button>
+                  </Link>
+                )}
+              </div>
+              {userData.phoneVerified && (
+                <p className="text-sm text-green-600">
+                  ✓ Numero verificato
+                </p>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
