@@ -35,7 +35,7 @@ export default function ProfilePage() {
           ...session,
           user: {
             ...session?.user,
-            emailVerified: false,
+            email,
           },
         })
       } else {
@@ -46,7 +46,6 @@ export default function ProfilePage() {
           user: {
             ...session?.user,
             email,
-            emailVerified: true,
           },
         })
       }
@@ -87,11 +86,9 @@ export default function ProfilePage() {
               />
             </div>
 
-            {!session?.user?.emailVerified && (
-              <div className="text-yellow-600 text-sm">
-                La tua email non è ancora verificata. Controlla la tua casella di posta per il link di verifica.
-              </div>
-            )}
+            <div className="text-yellow-600 text-sm">
+              Ricorda di verificare la tua email dopo eventuali modifiche. Controlla la tua casella di posta per il link di verifica.
+            </div>
 
             <button
               type="submit"
