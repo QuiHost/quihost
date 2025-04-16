@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="200" viewBox="0 0 800 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g>
+    <!-- House -->
+    <path d="M120 80 L180 40 L240 80 L240 160 L120 160 Z" fill="none" stroke="#1e3a8a" stroke-width="4"/>
+    <rect x="160" y="100" width="40" height="60" fill="#1e3a8a"/>
+    <path d="M140 90 L160 90 L160 110 L140 110 Z" fill="#facc15"/>
+    <path d="M200 90 L220 90 L220 110 L200 110 Z" fill="#facc15"/>
+    
+    <!-- Hero Character -->
+    <circle cx="180" cy="100" r="50" fill="#1e3a8a"/> <!-- Head -->
+    <path d="M150 90 C160 120 200 120 210 90" stroke="#ffffff" stroke-width="3" fill="none"/> <!-- Smile -->
+    <circle cx="165" cy="85" r="5" fill="#ffffff"/> <!-- Left eye -->
+    <circle cx="195" cy="85" r="5" fill="#ffffff"/> <!-- Right eye -->
+    
+    <!-- Cape -->
+    <path d="M130 100 Q180 140 230 100 L230 160 Q180 200 130 160 Z" fill="#ef4444"/>
+    
+    <!-- "H" Symbol -->
+    <rect x="165" y="75" width="30" height="50" fill="#facc15"/>
+    <path d="M170 95 L190 95" stroke="#1e3a8a" stroke-width="4"/>
+    
+    <!-- Text "Host Hero" -->
+    <text x="300" y="120" font-family="Arial Rounded MT Bold" font-size="72">
+      <tspan fill="#1e3a8a">Host</tspan>
+      <tspan fill="#facc15">Hero</tspan>
+    </text>
+  </g>
+</svg> 

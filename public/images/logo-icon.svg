@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- House -->
+  <path d="M60 80 L100 40 L140 80 L140 160 L60 160 Z" fill="#ffffff" stroke="#1e3a8a" stroke-width="4"/>
+  <rect x="90" y="100" width="20" height="60" fill="#1e3a8a"/>
+  <path d="M70 90 L85 90 L85 105 L70 105 Z" fill="#facc15"/>
+  <path d="M115 90 L130 90 L130 105 L115 105 Z" fill="#facc15"/>
+  
+  <!-- Hero Character -->
+  <circle cx="100" cy="100" r="40" fill="#1e3a8a"/> <!-- Head -->
+  <path d="M80 95 C90 115 110 115 120 95" stroke="#ffffff" stroke-width="3" fill="none"/> <!-- Smile -->
+  <circle cx="90" cy="90" r="4" fill="#ffffff"/> <!-- Left eye -->
+  <circle cx="110" cy="90" r="4" fill="#ffffff"/> <!-- Right eye -->
+  
+  <!-- Cape -->
+  <path d="M70 100 Q100 130 130 100 L130 150 Q100 180 70 150 Z" fill="#ef4444"/>
+  
+  <!-- "H" Symbol -->
+  <rect x="85" y="80" width="30" height="40" fill="#facc15"/>
+  <path d="M90 95 L110 95" stroke="#1e3a8a" stroke-width="4"/>
+</svg> 

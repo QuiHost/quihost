@@ -1,0 +1,9 @@
+[
+  {
+    "name": "struttura siena",
+    "city": "siena",
+    "type": "appartamento",
+    "rooms": "2",
+    "bathrooms": "1"
+  }
+]

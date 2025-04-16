@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="120" viewBox="0 0 400 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M80 60C80 93.1371 62.0914 120 40 120C17.9086 120 0 93.1371 0 60C0 26.8629 17.9086 0 40 0C62.0914 0 80 26.8629 80 60Z" fill="white"/>
+  <path d="M120 45H400V75H120V45Z" fill="white"/>
+  <text x="140" y="85" fill="white" font-family="Arial" font-size="48" font-weight="bold">Turno</text>
+  <text x="140" y="110" fill="white" font-family="Arial" font-size="16">Formerly TurnoverBnB</text>
+</svg> 

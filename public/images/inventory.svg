@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="500" viewBox="0 0 400 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Inventory boxes -->
+  <rect x="100" y="100" width="80" height="80" rx="10" fill="#14B8A6"/>
+  <rect x="200" y="100" width="80" height="80" rx="10" fill="#14B8A6"/>
+  <rect x="100" y="200" width="80" height="80" rx="10" fill="#14B8A6"/>
+  <rect x="200" y="200" width="80" height="80" rx="10" fill="#14B8A6"/>
+  <!-- Box contents -->
+  <rect x="110" y="120" width="60" height="8" rx="4" fill="#ffffff"/>
+  <rect x="110" y="140" width="40" height="8" rx="4" fill="#ffffff" opacity="0.7"/>
+  <rect x="210" y="120" width="60" height="8" rx="4" fill="#ffffff"/>
+  <rect x="210" y="140" width="40" height="8" rx="4" fill="#ffffff" opacity="0.7"/>
+  <rect x="110" y="220" width="60" height="8" rx="4" fill="#ffffff"/>
+  <rect x="110" y="240" width="40" height="8" rx="4" fill="#ffffff" opacity="0.7"/>
+  <rect x="210" y="220" width="60" height="8" rx="4" fill="#ffffff"/>
+  <rect x="210" y="240" width="40" height="8" rx="4" fill="#ffffff" opacity="0.7"/>
+  <!-- Notification badges -->
+  <circle cx="165" cy="85" r="15" fill="#EF4444"/>
+  <text x="160" y="90" font-family="Arial" font-size="12" fill="#ffffff">1</text>
+  <circle cx="265" cy="185" r="15" fill="#FCD34D"/>
+  <text x="260" y="190" font-family="Arial" font-size="12" fill="#ffffff">2</text>
+  <!-- Decorative elements -->
+  <path d="M50 300 L20 270" stroke="#14B8A6" stroke-width="4"/>
+  <path d="M350 150 L380 120" stroke="#14B8A6" stroke-width="4"/>
+</svg> 

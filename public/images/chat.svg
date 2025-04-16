@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="500" viewBox="0 0 400 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Chat bubbles -->
+  <path d="M100 150 Q80 180 100 210 L150 180 Z" fill="#14B8A6"/>
+  <path d="M300 250 Q320 280 300 310 L250 280 Z" fill="#E5E7EB"/>
+  <!-- Profile circles -->
+  <circle cx="150" cy="150" r="30" fill="#4B5563"/>
+  <circle cx="250" cy="250" r="30" fill="#14B8A6"/>
+  <!-- Message boxes -->
+  <rect x="180" y="130" width="120" height="40" rx="20" fill="#14B8A6"/>
+  <rect x="100" y="230" width="120" height="40" rx="20" fill="#E5E7EB"/>
+  <!-- Text lines -->
+  <rect x="200" y="145" width="80" height="8" rx="4" fill="#ffffff"/>
+  <rect x="120" y="245" width="80" height="8" rx="4" fill="#4B5563"/>
+  <!-- Notification badge -->
+  <circle cx="320" cy="150" r="15" fill="#EF4444"/>
+  <text x="315" y="155" font-family="Arial" font-size="12" fill="#ffffff">3</text>
+  <!-- Decorative elements -->
+  <path d="M50 400 L20 370" stroke="#14B8A6" stroke-width="4"/>
+  <path d="M350 100 L380 70" stroke="#14B8A6" stroke-width="4"/>
+</svg> 

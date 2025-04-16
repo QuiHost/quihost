@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+  <!-- Cerchio esterno -->
+  <circle cx="18" cy="18" r="17" fill="#ffffff" stroke="#000000" stroke-width="1"/>
+  
+  <!-- Pattern del pallone semplificato -->
+  <path d="M18,1 L30,9 L30,27 L18,35 L6,27 L6,9 Z" 
+        fill="none" 
+        stroke="#000000" 
+        stroke-width="1"/>
+  
+  <path d="M18,1 L30,9 L24,21 L12,21 L6,9 Z" 
+        fill="none" 
+        stroke="#000000" 
+        stroke-width="1"/>
+  
+  <path d="M18,35 L30,27 L24,15 L12,15 L6,27 Z" 
+        fill="none" 
+        stroke="#000000" 
+        stroke-width="1"/>
+</svg> 

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Host</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Dashboard Host</h1>
+
+    <!-- Form per aggiungere struttura -->
+    <form action="/add-property" method="POST">
+      <input type="text" name="name" placeholder="Nome struttura" required>
+      <input type="text" name="city" placeholder="Città" required>
+      <input type="text" name="type" placeholder="Tipo (es. Appartamento)" required>
+      <input type="number" name="rooms" placeholder="Camere" required>
+      <input type="number" name="bathrooms" placeholder="Bagni" required>
+      <button type="submit">Aggiungi struttura</button>
+    </form>
+
+    <h2>Le tue strutture</h2>
+    <ul id="property-list"></ul>
+
+    <!-- ✅ NUOVA SEZIONE PER RICHIESTA PULIZIA -->
+    <hr>
+    <h2>Richiedi una Pulizia</h2>
+    <form action="/add-cleaning-task" method="POST">
+      <input type="text" name="property" placeholder="Nome struttura" required>
+      <input type="date" name="date" required>
+      <input type="time" name="time" required>
+      <button type="submit">Richiedi pulizia</button>
+    </form>
+
+    <h2>Pulizie richieste</h2>
+    <ul id="cleaning-list"></ul>
+    <!-- ✅ FINE NUOVA SEZIONE -->
+
+    <p><a href="/host-login.html">Esci</a></p>
+  </div>
+
+  <script>
+    async function loadProperties() {
+      const res = await fetch('/api/host/properties');
+      const data = await res.json();
+      const list = document.getElementById('property-list');
+      list.innerHTML = '';
+      data.forEach(p => {
+        const li = document.createElement('li');
+        li.textContent = `${p.name} - ${p.city} (${p.rooms} camere, ${p.bathrooms} bagni)`;
+        list.appendChild(li);
+      });
+    }
+
+    async function loadCleanings() {
+      const res = await fetch('/api/host/cleaning-tasks');
+      const data = await res.json();
+      const list = document.getElementById('cleaning-list');
+      list.innerHTML = '';
+      data.forEach(c => {
+        const li = document.createElement('li');
+        li.textContent = `${c.property} - ${c.date} alle ${c.time}`;
+        list.appendChild(li);
+      });
+    }
+
+    window.onload = () => {
+      loadProperties();
+      loadCleanings();
+    };
+  </script>
+</body>
+</html>
