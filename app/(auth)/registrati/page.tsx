@@ -170,12 +170,9 @@ export default function RegisterPage() {
                     <div className="text-sm text-red-800">
                       {error}
                       {showLoginLink && (
-                        <>
-                          {' '}
-                          <Link href="/accedi" className="text-teal-600 hover:text-teal-500 font-medium">
-                            Vai alla pagina di accesso
-                          </Link>
-                        </>
+                        <Link href="/accedi" className="ml-1 text-teal-600 hover:text-teal-500 font-medium">
+                          Vai alla pagina di accesso
+                        </Link>
                       )}
                     </div>
                   </div>
