@@ -1,6 +1,9 @@
 {
   "version": 2,
   "framework": "nextjs",
-  "installCommand": "yarn install",
-  "buildCommand": "yarn build"
+  "installCommand": "yarn install --network-timeout 300000",
+  "buildCommand": "yarn build",
+  "env": {
+    "NODE_ENV": "production"
+  }
 } 

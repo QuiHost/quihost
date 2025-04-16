@@ -33,13 +33,18 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# IDE
+.idea
+.vscode
+
+# Lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
 # database
 *.db
 *.sqlite
-
-# IDE
-.vscode/
-.idea/
 
 # Prisma
 /prisma/*.db
