@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { authOptions } from '@/app/api/auth/[...nextauth]/options'
 import { prisma } from '@/lib/prisma'
 import { sendVerificationEmail } from '@/lib/email'
 import crypto from 'crypto'
@@ -34,23 +34,32 @@ export async function PUT(request: Request) {
     }
 
     // Generate new verification token
-    const verificationToken = crypto.randomBytes(32).toString('hex')
+    const verificationToken = crypto.randomUUID()
+    const expiryDate = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours from now
 
-    // Update user with new email and verification token
+    // Update user with new email and set emailVerified to null
     const user = await prisma.user.update({
       where: { email: session.user.email },
       data: {
         email: email,
-        emailVerified: false,
-        verificationToken: verificationToken
+        emailVerified: null
+      }
+    })
+
+    // Create verification token in the VerificationToken model
+    await prisma.verificationToken.create({
+      data: {
+        identifier: email,
+        token: verificationToken,
+        expires: expiryDate
       }
     })
 
     // Send verification email
-    await sendVerificationEmail(email, verificationToken, user.name)
+    await sendVerificationEmail(email, verificationToken)
 
     return NextResponse.json({
-      message: 'Email aggiornata con successo',
+      message: 'Email aggiornata con successo. Controlla la tua email per verificare il nuovo indirizzo.',
       user: {
         ...user,
         password: undefined // Don't send password back
