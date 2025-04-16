@@ -1,9 +1,8 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
-
-const prisma = new PrismaClient();
+import { User } from "next-auth";
 
 const handler = NextAuth({
   providers: [
@@ -22,7 +21,7 @@ const handler = NextAuth({
           where: { email: credentials.email }
         });
 
-        if (!user) {
+        if (!user || !user.password) {
           throw new Error("Utente non trovato");
         }
 
@@ -40,8 +39,10 @@ const handler = NextAuth({
           email: user.email,
           name: user.name,
           role: user.userType,
-          userType: user.userType
-        };
+          userType: user.userType,
+          image: user.image,
+          emailVerified: user.emailVerified
+        } as User;
       }
     })
   ],
