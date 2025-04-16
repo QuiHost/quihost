@@ -77,19 +77,33 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: 'Token required' }, { status: 400 })
     }
 
-    // Trova l'utente con il token di verifica
-    const user = await prisma.user.findFirst({
-      where: { verificationToken: token }
+    // Trova il token di verifica
+    const verificationRecord = await prisma.verificationToken.findUnique({
+      where: { token }
     })
 
-    if (!user) {
+    if (!verificationRecord) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 400 })
     }
 
-    // Aggiorna l'utente rimuovendo il token di verifica (indica che l'email è verificata)
+    // Trova l'utente associato all'email nel token di verifica
+    const user = await prisma.user.findUnique({
+      where: { email: verificationRecord.identifier }
+    })
+
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+    }
+
+    // Aggiorna l'utente impostando emailVerified
     await prisma.user.update({
       where: { id: user.id },
-      data: { verificationToken: null }
+      data: { emailVerified: new Date() }
+    })
+
+    // Elimina il token di verifica
+    await prisma.verificationToken.delete({
+      where: { token }
     })
 
     return NextResponse.json({ success: true })
